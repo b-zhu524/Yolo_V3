@@ -151,6 +151,7 @@ class YoloV3(nn.Module):
                         CNNBlock(in_channels, in_channels // 2, kernel_size=1),
                         ScalePrediction(in_channels // 2, num_classes=self.num_classes),
                     ]
+                    in_channels = in_channels // 2  # fixed bug
 
                 elif module == "U":
                     layers.append(nn.Upsample(scale_factor=2))
