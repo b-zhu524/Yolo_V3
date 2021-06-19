@@ -12,13 +12,9 @@ List: ["B", 1]; B is the residual block followed by the number of repeats
 
 
 class CNNBlock(nn.Module):
-    def __init__(self, in_channels, out_channels, bn_act=True,
-                 kernel_size=(1, 1), stride=(1, 1), padding=0, **kwargs):
-
+    def __init__(self, in_channels, out_channels, bn_act=True, **kwargs):
         super(CNNBlock, self).__init__()
-        self.conv = nn.Conv2d(in_channels, out_channels, bias=not bn_act, kernel_size=kernel_size,
-                              stride=stride, padding=padding, **kwargs)
-
+        self.conv = nn.Conv2d(in_channels, out_channels, bias=not bn_act, **kwargs)
         self.bn = nn.BatchNorm2d(out_channels)
         self.l_relu = nn.LeakyReLU(0.1)
         self.use_bn_act = bn_act
@@ -47,7 +43,10 @@ class ResidualBlock(nn.Module):
 
     def forward(self, x):
         for layer in self.layers:
-            x = layer(x) + x if self.use_residual else layer(x)
+            if self.use_residual:
+                x = x + layer(x)
+            else:
+                x = layer(x)
 
         return x
 
@@ -56,6 +55,7 @@ class ScalePrediction(nn.Module):
     def __init__(self, in_channels, num_classes):
         super(ScalePrediction, self).__init__()
         self.pred = nn.Sequential(
+
             CNNBlock(in_channels, 2*in_channels, kernel_size=3, padding=1),
             CNNBlock(2*in_channels, (num_classes + 5) * 3, bn_act=False, kernel_size=1), # [po, x, y, w, h]
         )
@@ -63,7 +63,8 @@ class ScalePrediction(nn.Module):
 
     def forward(self, x):
         return (
-            self.pred(x).reshape(x.shape[0], 3, self.num_classes + 5, x.shape[2], x.shape[3])
+            self.pred(x)
+            .reshape(x.shape[0], 3, self.num_classes + 5, x.shape[2], x.shape[3])
             .permute(0, 1, 3, 4, 2)
         )
 
@@ -117,6 +118,7 @@ class YoloV3(nn.Module):
 
             elif isinstance(layer, nn.Upsample):
                 x = torch.cat([x, route_connections[-1]], dim=1)
+                route_connections.pop()
 
         return outputs
 
@@ -146,7 +148,7 @@ class YoloV3(nn.Module):
                 if module == "S":
                     layers += [
                         ResidualBlock(in_channels, use_residual=False, num_repeats=1),
-                        CNNBlock(in_channels, in_channels // 2),
+                        CNNBlock(in_channels, in_channels // 2, kernel_size=1),
                         ScalePrediction(in_channels // 2, num_classes=self.num_classes),
                     ]
 
@@ -159,11 +161,11 @@ class YoloV3(nn.Module):
 
 if __name__ == '__main__':
     num_classes = 20
-    image_size = 416
+    IMAGE_SIZE = 416
     model = YoloV3(num_classes=num_classes)
-    x = torch.randn((2, 3, image_size, image_size))
+    x = torch.randn((2, 3, IMAGE_SIZE, IMAGE_SIZE))
     out = model(x)
-    assert model(x)[0] .shape == (2, 3, image_size//32, image_size//32, num_classes + 5)
-    assert model(x)[1].shape == (2, 3, image_size//16, image_size//16, num_classes + 5)
-    assert model(x)[2].shape == (2, 3, image_size // 8, image_size // 8, num_classes + 5)
-    print("successful")
+    assert model(x)[0].shape == (2, 3, IMAGE_SIZE//32, IMAGE_SIZE//32, num_classes + 5)
+    assert model(x)[1].shape == (2, 3, IMAGE_SIZE//16, IMAGE_SIZE//16, num_classes + 5)
+    assert model(x)[2].shape == (2, 3, IMAGE_SIZE//8, IMAGE_SIZE//8, num_classes + 5)
+    print("Success!")
