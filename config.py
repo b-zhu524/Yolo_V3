@@ -15,13 +15,13 @@ num_classes = 20
 learning_rate = 1e-5
 weight_decay = 1e-4
 num_epochs = 100
-conf_threshold = 0.05
+conf_threshold = 0.6
 map_iou_thresh = 0.5
 nms_iou_thresh = 0.45
 S = [image_size // 32, image_size // 16, image_size // 8]
 pin_memory = True
-load_model = True
-save_model = True
+load_model = False
+save_model = False
 checkpoint_file = "checkpoint.pth.tar"
 img_dir = dataset + "/images/"
 label_dir = dataset + "/labels/"
@@ -33,7 +33,7 @@ ANCHORS = [
 ]
 # rescaled to be between [0, 1]
 
-scale = 1.1
+scale = 1.2
 train_transforms = A.Compose(
     [
         A.LongestMaxSize(max_size=int(image_size * scale)),
@@ -65,3 +65,120 @@ train_transforms = A.Compose(
     bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[]),
 )
 
+test_transforms = A.Compose(
+    [
+        A.LongestMaxSize(max_size=image_size),
+        A.PadIfNeeded(
+            min_height=image_size, min_width=image_size, border_mode=cv2.BORDER_CONSTANT
+        ),
+        A.Normalize(),
+        ToTensorV2
+    ],
+    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[])
+)
+
+
+PASCAL_CLASSES = [
+    "aeroplane",
+    "bicycle",
+    "bird",
+    "boat",
+    "bottle",
+    "bus",
+    "car",
+    "cat",
+    "chair",
+    "cow",
+    "diningtable",
+    "dog",
+    "horse",
+    "motorbike",
+    "person",
+    "pottedplant",
+    "sheep",
+    "sofa",
+    "train",
+    "tvmonitor"
+]
+
+COCO_LABELS = ['person',
+ 'bicycle',
+ 'car',
+ 'motorcycle',
+ 'airplane',
+ 'bus',
+ 'train',
+ 'truck',
+ 'boat',
+ 'traffic light',
+ 'fire hydrant',
+ 'stop sign',
+ 'parking meter',
+ 'bench',
+ 'bird',
+ 'cat',
+ 'dog',
+ 'horse',
+ 'sheep',
+ 'cow',
+ 'elephant',
+ 'bear',
+ 'zebra',
+ 'giraffe',
+ 'backpack',
+ 'umbrella',
+ 'handbag',
+ 'tie',
+ 'suitcase',
+ 'frisbee',
+ 'skis',
+ 'snowboard',
+ 'sports ball',
+ 'kite',
+ 'baseball bat',
+ 'baseball glove',
+ 'skateboard',
+ 'surfboard',
+ 'tennis racket',
+ 'bottle',
+ 'wine glass',
+ 'cup',
+ 'fork',
+ 'knife',
+ 'spoon',
+ 'bowl',
+ 'banana',
+ 'apple',
+ 'sandwich',
+ 'orange',
+ 'broccoli',
+ 'carrot',
+ 'hot dog',
+ 'pizza',
+ 'donut',
+ 'cake',
+ 'chair',
+ 'couch',
+ 'potted plant',
+ 'bed',
+ 'dining table',
+ 'toilet',
+ 'tv',
+ 'laptop',
+ 'mouse',
+ 'remote',
+ 'keyboard',
+ 'cell phone',
+ 'microwave',
+ 'oven',
+ 'toaster',
+ 'sink',
+ 'refrigerator',
+ 'book',
+ 'clock',
+ 'vase',
+ 'scissors',
+ 'teddy bear',
+ 'hair drier',
+ 'toothbrush'
+]
