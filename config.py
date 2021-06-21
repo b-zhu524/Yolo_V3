@@ -7,7 +7,7 @@ from albumentations.pytorch import ToTensorV2
 
 dataset = "PASCAL_VOC"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-# seed_everything()
+# seed_everything()   # for deterministic behavior
 num_workers = 4
 batch_size = 32
 image_size = 416
