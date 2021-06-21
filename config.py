@@ -10,7 +10,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # seed_everything()
 num_workers = 4
 batch_size = 32
-image_size = 416,
+image_size = 416
 num_classes = 20
 learning_rate = 1e-5
 weight_decay = 1e-4
@@ -26,7 +26,8 @@ checkpoint_file = "checkpoint.pth.tar"
 img_dir = dataset + "/images/"
 label_dir = dataset + "/labels/"
 
-ANCHORS = [
+# anchors computed with k-means clustering on coco dataset
+anchors = [
     [(0.28, 0.22), (0.38, 0.48), (0.9, 0.78)],
     [(0.07, 0.15), (0.15, 0.11), (0.14, 0.29)],
     [(0.02, 0.03), (0.04, 0.07), (0.08, 0.06)],
