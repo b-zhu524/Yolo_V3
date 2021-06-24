@@ -7,9 +7,9 @@ import torch
 from PIL import Image, ImageFile
 from torch.utils.data import Dataset, DataLoader
 
-from utils import (
+from iou_utils import (
     iou_width_height as iou,
-    non_max_suppression as nms,
+    non_max_suppression
 )
 
 
@@ -47,7 +47,7 @@ class YoloDataset(Dataset):
             image = augmentations["image"]
             bboxes = augmentations["boxes"]
 
-        targets = [torch.zeros((self.num_anchors // 3, S, S, 6) for S in self.s)] # [p_o, x, y, w, h, c]
+        targets = [torch.zeros((self.num_anchors // 3, S, S, 6)) for S in self.s] # [p_o, x, y, w, h, c]
 
         for box in bboxes:
             iou_anchors = iou(torch.tensor(box[2:4]), self.anchors)

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from utils import intersection_over_union
+from iou_utils import intersection_over_union
 
 
 class YoloLoss(nn.Module):
@@ -10,7 +10,7 @@ class YoloLoss(nn.Module):
         self.mse = nn.MSELoss()
         self.bce = nn.BCEWithLogitsLoss()
         self.entropy = nn.CrossEntropyLoss()
-        self.sigmoid = nn.Sigmoid
+        self.sigmoid = nn.Sigmoid()
 
         # Constants
         self.lambda_class = 1
