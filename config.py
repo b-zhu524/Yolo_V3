@@ -79,7 +79,7 @@ test_transforms = A.Compose(
 )
 
 
-PASCAL_CLASSES = [
+PASCAL_CLASSES = (
     "aeroplane",
     "bicycle",
     "bird",
@@ -100,9 +100,9 @@ PASCAL_CLASSES = [
     "sofa",
     "train",
     "tvmonitor"
-]
+)
 
-COCO_LABELS = [
+COCO_LABELS = (
     'person',
     'bicycle',
     'car',
@@ -183,4 +183,4 @@ COCO_LABELS = [
     'teddy bear',
     'hair drier',
     'toothbrush'
-]
+)

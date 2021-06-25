@@ -22,9 +22,9 @@ def iou_width_height(boxes1, boxes2):
 def intersection_over_union(boxes_preds, boxes_labels, box_format="midpoint"):
     """
 
-    :param boxes_preds (tensor): Predictions of bounding boxes (batch_size, 4)
-    :param boxes_labels (tensor): Correct labels of bounding boxes (batch_size, 4)
-    :param box_format (str): midpoint/corners, if boxes (x,y,w,h) or (x1,y1,x2,y2)
+    :param boxes_preds: (tensor) Predictions of bounding boxes (batch_size, 4)
+    :param boxes_labels: (tensor) Correct labels of bounding boxes (batch_size, 4)
+    :param box_format": (str) midpoint/corners, if boxes (x,y,w,h) or (x1,y1,x2,y2)
     :return:
         tensor: intersection / union for all examples
     """
