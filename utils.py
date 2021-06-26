@@ -37,12 +37,12 @@ def non_max_suppression(bboxes, iou_threshold, threshold, box_format="corners"):
         bboxes = [
             box for box in bboxes
             if box[0] != chosen_box[0]
-            or iou_utils.intersection_over_union(
+               or iou_utils.intersection_over_union(
                 torch.tensor(chosen_box[2:]),
                 torch.tensor(box[2:]),
                 box_format=box_format,
             )
-            < iou_threshold
+               < iou_threshold
         ]
 
         bboxes_after_nms.append(chosen_box)
@@ -134,8 +134,8 @@ def mean_average_precision(
         FP_cumulative_sum = torch.cumsum(FP, dim=0)
         recalls = TP_cumulative_sum / (total_true_bboxes + stable_val)
         precisions = torch.divide(TP_cumulative_sum, (TP_cumulative_sum + FP_cumulative_sum + stable_val))
-        precisions = torch.cat((torch.tensor([1]), precisions)) # cat to [1] for y axis
-        recalls = torch.cat((torch.tensor([0]), recalls))   # cat to [0] for x axis
+        precisions = torch.cat((torch.tensor([1]), precisions))  # cat to [1] for y axis
+        recalls = torch.cat((torch.tensor([0]), recalls))  # cat to [0] for x axis
         average_precisions.append(torch.trapz)
 
     return sum(average_precisions) / len(average_precisions)
@@ -144,7 +144,7 @@ def mean_average_precision(
 def plot_image(image, boxes):
     """Plots predicted bounding boxes on the image"""
     cmap = plt.get_cmap("tab20b")
-    class_labels = config.COCO_LABELS if config.dataset=="COCO" else config.PASCAL_CLASSES
+    class_labels = config.COCO_LABELS if config.dataset == "COCO" else config.PASCAL_CLASSES
     colors = [cmap(i) for i in np.linspace(0, 1, len(class_labels))]
     im = np.array(image)
     height, width, _ = im.shape
@@ -161,7 +161,7 @@ def plot_image(image, boxes):
     for box in boxes:
         assert len(box) == 6, "box should contain [class_pred, confidence, x, y, w, h]"
         class_pred = box[0]
-        box = box[2:]   # box[2:] is [x, y, w, h]
+        box = box[2:]  # box[2:] is [x, y, w, h]
         upper_left_x = box[0] - box[2] / 2
         upper_left_y = box[1] - box[3] / 2
 
@@ -272,9 +272,9 @@ def cells_to_bboxes(predictions, anchors, S, is_preds=True):
 
     cell_indices = (
         torch.arange(S)
-        .repeat(predictions.shape[0], 3, S, 1)
-        .unsqueeze(-1)
-        .to(predictions.device)
+            .repeat(predictions.shape[0], 3, S, 1)
+            .unsqueeze(-1)
+            .to(predictions.device)
     )
 
     x = 1 / S * (box_predictions[..., 0:1] + cell_indices)
@@ -301,8 +301,8 @@ def check_class_accuracy(model, loader, threshold):
 
         for i in range(3):
             y[i] = y[i].to(device)
-            obj = y[i][..., 0] == 1 # in paper this is Iobj_i
-            no_obj = y[i][..., 0] == 0 # in paper this is Iobj_i
+            obj = y[i][..., 0] == 1  # in paper this is Iobj_i
+            no_obj = y[i][..., 0] == 0  # in paper this is Iobj_i
 
             correct_class += torch.sum(
                 torch.argmax(out[i][..., 5:], dim=-1) == y[i][..., 5][obj]
@@ -316,9 +316,9 @@ def check_class_accuracy(model, loader, threshold):
             correct_no_obj += torch.sum(obj_preds[no_obj] == y[i][..., 0][no_obj])
             total_no_obj += torch.sum(no_obj)
 
-    print(f"Class Accuracy is {(correct_class / (total_class_preds+stable_val))*100:2f}%")
-    print(f"No obj accuracy is: {(correct_no_obj/(total_no_obj+stable_val))*100:2f}%")
-    print(f"Obj accuracy is: {(correct_obj/(total_obj+stable_val))*100:2f}%")
+    print(f"Class Accuracy is {(correct_class / (total_class_preds + stable_val)) * 100:2f}%")
+    print(f"No obj accuracy is: {(correct_no_obj / (total_no_obj + stable_val)) * 100:2f}%")
+    print(f"Obj accuracy is: {(correct_obj / (total_obj + stable_val)) * 100:2f}%")
     model.train()
 
 
@@ -374,7 +374,7 @@ def get_loaders(train_csv_path, test_csv_path):
         pin_memory=config.pin_memory,
         shuffle=True,
         drop_last=True
-    )   # drop_last ignores the last batch if not divisible
+    )  # drop_last ignores the last batch if not divisible
 
     test_dataset = YoloDataset(
         test_csv_path,

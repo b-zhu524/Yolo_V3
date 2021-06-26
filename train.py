@@ -58,7 +58,7 @@ def train_fn(train_loader, model, optimizer, loss_fn, scaler, scaled_anchors):
 
 
 def main():
-    model = YoloV3(num_classes=config.num_classes)
+    model = YoloV3(num_classes=config.num_classes).to(config.device)
     optimizer = optim.Adam(model.parameters(),
                            lr=config.learning_rate,
                            weight_decay=config.weight_decay)

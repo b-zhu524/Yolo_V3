@@ -50,7 +50,7 @@ train_transforms = A.Compose(
                 A.ShiftScaleRotate(
                     rotate_limit=20, p=0.5, border_mode=cv2.BORDER_CONSTANT
                 ),
-                A.Affine(shear=15, p=0.5, mode="constant"), # linear transformation
+                A.Affine(shear=15, p=0.5, mode=cv2.BORDER_CONSTANT), # linear transformation
             ],
             p=1.0,
         ),
@@ -60,7 +60,7 @@ train_transforms = A.Compose(
         A.Posterize(p=0.1),
         A.ToGray(p=0.1),
         A.ChannelShuffle(p=0.05),
-        A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
+        A.Normalize(),
         ToTensorV2(),
     ],
     bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[]),

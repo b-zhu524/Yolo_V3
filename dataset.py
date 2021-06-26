@@ -35,17 +35,17 @@ class YoloDataset(Dataset):
         return len(self.annotations)
 
     def __getitem__(self, index):
-        global anchor_taken, scale_idx
+        # global anchor_taken, scale_idx
 
         label_path = os.path.join(self.label_dir, self.annotations.iloc[index, 1])
-        bboxes = np.roll(np.loadtxt(frame=label_path, delimiter=" ", ndmin=2).tolist(), 4, axis=1).tolist()
+        bboxes = np.roll(np.loadtxt(fname=label_path, delimiter=" ", ndmin=2).tolist(), 4, axis=1).tolist()
         img_path = os.path.join(self.img_dir, self.annotations.iloc[index, 0])
         image = np.array(Image.open(img_path).convert("RGB"))
 
         if self.transform:
             augmentations = self.transform(image=image, bboxes=bboxes)
             image = augmentations["image"]
-            bboxes = augmentations["boxes"]
+            bboxes = augmentations["bboxes"]
 
         targets = [torch.zeros((self.num_anchors // 3, S, S, 6)) for S in self.s] # [p_o, x, y, w, h, c]
 
